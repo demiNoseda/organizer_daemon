@@ -10,11 +10,11 @@ El Organizer Daemon es un servicio de sistema diseñado para automatizar el proc
 - Organización de archivos basada en nombres o extensiones.
 - Configurable y fácil de adaptar a diferentes necesidades de organización de archivos.
 - Resistente a cambios en la configuración sin necesidad de reiniciar el servicio.
-- Aplica la primer regla que se cumpla.
+- Aplica la primera regla que se cumpla.
 
 ## Requisitos Previos
 
-Antes de instalar y ejecutar el Organizer Daemon, asegúrate de tener instalado Node.js. Este proyecto ha sido probado con Node.js versión 18
+Antes de instalar y ejecutar el Organizer Daemon, asegúrate de tener instalado Node.js. Este proyecto ha sido probado con Node.js versión 18.
 
 ## Instalación
 
@@ -34,40 +34,37 @@ Antes de instalar y ejecutar el Organizer Daemon, asegúrate de tener instalado 
    cd ~/myDaemon
    ```
 
-3. Copia los archivos `index.js`, `config.json`, y `organizer.service` en el directorio del proyecto.
+3. Copia los archivos `index.js` y `config.json` en el directorio del proyecto.
+
+4. Mueve el archivo `organizer.service` al directorio `/etc/systemd/system/` para integrarlo con el sistema de gestión de servicios de systemd.
 
 ## Configuración
 
-Edita el archivo `config.json` para establecer las carpetas a monitorear y las reglas de movimiento de archivos:
+Edita el archivo `config.json` para establecer las carpetas a monitorear y las reglas de movimiento de archivos. Aquí tienes un ejemplo de cómo configurar las reglas:
 
 ```json
 {
-  "watchFolder": "FOLDER WATCHED",
-  "checkInterval": 30000,
+  "watchFolder": "/home/debian/Descargas/",
+  "checkInterval": 5000,
   "rules": [
     {
-      "nameContains": "NAME RULE",
-      "destination": "DESTINATION PATH"
+      "nameContains": "honorarios",
+      "destination": "/home/debian/Documentos/honorarios/"
     },
     {
-      "extensions": ["EXTENSION RULE"],
-      "destination": "DESTINATION PATH"
+      "extensions": [".pdf"],
+      "destination": "/home/debian/Documentos/archivos_pdf/"
     }
   ]
 }
 ```
 
-**watchFolder**
-Carpeta observada
+### Detalles de configuración
 
-**checkInterval**
-Intervalo de tiempo en el que daemon revisa la carpeta
-
-**nameContains**
-Regla de texto por nombre del archivo.
-
-**extensions**
-Regla de texto por extension del archivo.
+- **watchFolder**: Especifica la ruta completa del directorio que el daemon debe monitorear.
+- **checkInterval**: Define el intervalo de tiempo, en milisegundos, en el que el daemon revisa el directorio watchFolder para cambios.
+- **nameContains**: Define una subcadena que debe estar presente en el nombre del archivo para que la regla se aplique.
+- **extensions**: Especifica un arreglo de extensiones de archivo. Si el archivo tiene una extensión incluida en esta lista, la regla se aplicará.
 
 ## Uso
 
@@ -97,5 +94,3 @@ Los registros del sistema se gestionan a través de syslog. Puedes ver los regis
 ```bash
 journalctl -u organizer
 ```
-
----
