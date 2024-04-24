@@ -1,0 +1,14 @@
+{
+  "watchFolder": "FOLDER WATCHED",
+  "checkInterval": 30000,
+  "rules": [
+    {
+      "nameContains": "NAME RULE",
+      "destination": "DESTINATION PATH"
+    },
+    {
+      "extensions": ["EXTENSION RULE"],
+      "destination": "DESTINATION PATH"
+    }
+  ]
+}
