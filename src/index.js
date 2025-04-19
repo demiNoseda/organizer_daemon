@@ -18,6 +18,13 @@ function log(message) {
   console.log(formatted.trim()); // También en consola si la hay
 }
 
+function ensureDirExists(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+    log(`📁 Carpeta creada: ${dirPath}`);
+  }
+}
+
 function loadConfig() {
   try {
     const configRaw = fs.readFileSync(configPath, "utf8");
@@ -49,6 +56,7 @@ function moveFiles(config) {
       );
 
       if (rule) {
+        ensureDirExists(rule.destination);
         const newPath = path.join(rule.destination, fileName);
         fs.rename(fullPath, newPath, (err) => {
           if (err) {

@@ -1,46 +1,43 @@
-¡Perfecto, Demi! Acá tenés el contenido listo para copiar y pegar directamente como un `README.md` limpio:
-
----
-
-```markdown
 # Organizer Daemon
 
 ## 🧠 Descripción
 
-**Organizer Daemon** es una herramienta multiplataforma diseñada para automatizar la organización de archivos en directorios como la carpeta de descargas. Utilizando un archivo de configuración `config.json`, monitorea una carpeta y mueve archivos según reglas definidas, basadas en nombres o extensiones.
+**Organizer Daemon** es una herramienta multiplataforma diseñada para automatizar la organización de archivos en carpetas como "Descargas". Utiliza un archivo de configuración `config.json` para monitorear una carpeta y mover archivos según reglas basadas en nombres o extensiones.
 
-Puede ejecutarse como:
+Se puede ejecutar como:
 
-- Un **servicio de sistema** en Linux (`systemd`)
-- Un **servicio en segundo plano** en Windows (mediante [`nssm`](https://nssm.cc))
-- Y próximamente en **macOS** (`launchd`)
+- 🐧 Un **servicio de sistema** en Linux (`systemd`)
+- 🪟 Un **servicio en segundo plano** en Windows (usando [`nssm`](https://nssm.cc))
+- 🍎 Un **servicio de usuario** en macOS (usando `launchd`)
+
+---
 
 ## ✨ Características
 
-- Monitoreo automático de directorios
+- Monitoreo automático de carpetas
 - Organización por nombre de archivo o extensión
-- Configuración editable sin reiniciar el daemon
-- Soporte multiplataforma
-- Fácil instalación y ejecución
+- Configuración editable en caliente
+- Compatible con Linux, Windows y macOS
+- Logs automáticos de actividad y errores
+- Ejecución como servicio persistente
+
+---
 
 ## 📁 Estructura del proyecto
+
 ```
 
 organizer-daemon/
 ├── src/
-│ └── index.js
+│ ├── index.js
 │ └── config/
 │ └── default.config.json
+│ └── scripts/
+│ └── install-mac.sh
 ├── dist/
 │ ├── win/
-│ │ ├── organizer-daemon.exe
-│ │ └── config.json
 │ ├── linux/
-│ │ ├── organizer-daemon
-│ │ └── config.json
 │ └── mac/
-│ ├── organizer-daemon
-│ └── config.json
 ├── scripts/
 │ ├── build-all.sh
 │ ├── build-all.ps1
@@ -51,7 +48,9 @@ organizer-daemon/
 ├── package.json
 └── README.md
 
-````
+```
+
+---
 
 ## ⚙️ Configuración (`config.json`)
 
@@ -59,41 +58,34 @@ Ejemplo:
 
 ```json
 {
-  "watchFolder": "FOLDER WATCHED",
-  "checkInterval": 30000,
+  "watchFolder": "/Users/demian/Downloads",
+  "checkInterval": 1000,
   "rules": [
     {
-      "nameContains": "NAME RULE",
-      "destination": "DESTINATION PATH"
+      "nameContains": "Protocolo",
+      "destination": "/Users/demian/Downloads/Facultad"
     },
     {
-      "extensions": ["EXTENSION RULE"],
-      "destination": "DESTINATION PATH"
+      "extensions": [".pdf"],
+      "destination": "/Users/demian/Downloads/Documentos"
     }
   ]
 }
-
-````
+```
 
 ### Campos
 
 - `watchFolder`: Carpeta a monitorear.
-- `checkInterval`: Intervalo en milisegundos. (Ej: 604800000 = una vez por semana)
-- `rules`: Reglas que determinan a dónde mover cada archivo:
-  - `nameContains`: Subcadena que debe estar en el nombre del archivo.
-  - `extensions`: Lista de extensiones que activa la regla.
+- `checkInterval`: Intervalo de ejecución en milisegundos (ej: `604800000` = 1 semana).
+- `rules`: Lista de reglas para mover archivos:
+  - `nameContains`: Coincidencia por nombre.
+  - `extensions`: Coincidencia por extensión.
+- 📝 Se aplica la **primera regla que coincida**.
+- 📁 Las carpetas de destino se crean automáticamente si no existen.
 
-> ⚠️ Se aplica la primera regla que coincida.
+---
 
-## 🐧 Instalación en Linux (modo servicio)
-
-1. Instalá Node.js si vas a correr desde fuente:
-
-```bash
-sudo apt install nodejs npm
-```
-
-2. Copiá `organizer.service` a systemd:
+## 🐧 Instalación en Linux (`systemd`)
 
 ```bash
 sudo cp service/linux/organizer.service /etc/systemd/system/
@@ -102,42 +94,68 @@ sudo systemctl enable organizer
 sudo systemctl start organizer
 ```
 
-3. Consultar estado:
+### Ver logs:
 
 ```bash
-sudo systemctl status organizer
-journalctl -u organizer
+journalctl -u organizer -f
 ```
 
-## 🪟 Instalación en Windows (como servicio)
+---
 
-1. Descargá [`nssm`](https://nssm.cc/download) y colocá su ejecutable donde puedas accederlo.
+## 🪟 Instalación en Windows (`nssm`)
 
-2. Navegá a `dist/win/` y verificá que existan:
-
-   - `organizer-daemon.exe`
-   - `config.json`
-
-3. Ejecutá desde PowerShell (como administrador):
+1. Descargá [`nssm`](https://nssm.cc/download)
+2. Copiá `organizer-daemon.exe` y `config.json` a `dist/win/`
+3. Ejecutá:
 
 ```powershell
 & "C:\ruta\a\nssm.exe" install OrganizerDaemon
 ```
 
 4. En la ventana:
-
    - **Application path**: `dist/win/organizer-daemon.exe`
    - **Startup directory**: `dist/win/`
-
-5. Iniciá el servicio:
+5. Luego:
 
 ```powershell
 & "C:\ruta\a\nssm.exe" start OrganizerDaemon
 ```
 
+---
+
+## 🍎 Instalación en macOS (`launchd`)
+
+1. Generá el ejecutable y config:
+
+```bash
+npm run build:mac
+```
+
+2. Instalá como servicio con:
+
+```bash
+npm run mac:install
+```
+
+3. Ver logs:
+
+```bash
+npm run mac:logs
+```
+
+4. Detener o recargar:
+
+```bash
+npm run mac:unload     # Detener
+npm run mac:install    # Instalar o reinstalar
+npm run mac:reload     # Reiniciar servicio
+```
+
+---
+
 ## 🛠 Construcción multiplataforma
 
-Requiere tener instalado [`pkg`](https://github.com/vercel/pkg):
+Instalá [`pkg`](https://github.com/vercel/pkg):
 
 ```bash
 npm install -g pkg
@@ -149,16 +167,10 @@ npm install -g pkg
 npm run build:all
 ```
 
-### Linux/macOS:
+Esto genera:
 
-```bash
-bash scripts/build-all.sh
-```
+- `dist/win/organizer-daemon.exe`
+- `dist/linux/organizer-daemon`
+- `dist/mac/organizer-daemon`
 
-### Windows:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/build-all.ps1
-```
-
-Esto generará los ejecutables en `dist/` y copiará el `config.json` correspondiente.
+y copia `config.json` a cada carpeta.

@@ -1,30 +1,14 @@
 {
-  "watchFolder": "C:/Users/Demian/Downloads",
-  "checkInterval": 1000,
+  "watchFolder": "/home/debian/Descargas/",
+  "checkInterval": 5000,
   "rules": [
     {
-      "nameContains": "Protocolo",
-      "destination": "C:/Users/Demian/Downloads/Facultad"
+      "nameContains": "honorarios",
+      "destination": "/home/debian/Documentos/honorarios/"
     },
     {
-      "nameContains": "PPS",
-      "destination": "C:/Users/Demian/Downloads/Facultad"
-    },
-    {
-      "extensions": [".exe", ".msi"],
-      "destination": "C:/Users/Demian/Downloads/Ejecutables"
-    },
-    {
-      "extensions": [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff"],
-      "destination": "C:/Users/Demian/Downloads/Imagenes"
-    },
-    {
-      "extensions": [".zip", ".rar", ".7z", ".tar", ".gz", ".xz"],
-      "destination": "C:/Users/Demian/Downloads/Comprimidos"
-    },
-    {
-      "extensions": [".pdf", ".doc", ".docx", ".txt", ".odt", ".xls", ".xlsx", ".ppt", ".pptx"],
-      "destination": "C:/Users/Demian/Downloads/Documentos"
+      "extensions": [".pdf"],
+      "destination": "/home/debian/Documentos/archivos_pdf/"
     }
   ]
 }

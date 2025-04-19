@@ -1,2 +1,2 @@
-dist/config.json
-dist/organizer-daemon.exe
+dist/*
+dist/mac/config.json
