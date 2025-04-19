@@ -6,11 +6,16 @@
   "bin": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-
     "build:win": "pkg . --target node18-win-x64 --output dist/win/organizer-daemon.exe && powershell -Command \"Copy-Item -Path src/config/default.config.json -Destination dist/win/config.json\"",
     "build:linux": "pkg . --target node18-linux-x64 --output dist/linux/organizer-daemon && cp src/config/default.config.json dist/linux/config.json",
     "build:mac": "pkg . --target node18-macos-x64 --output dist/mac/organizer-daemon && cp src/config/default.config.json dist/mac/config.json",
     "build:all": "npm run build:win && npm run build:linux && npm run build:mac",
+    "win:ensure-nssm": "powershell -Command \"if (-not (Test-Path './nssm/nssm.exe')) { Invoke-WebRequest -Uri 'https://nssm.cc/release/nssm-2.24.zip' -OutFile 'nssm.zip'; Expand-Archive -Path 'nssm.zip' -DestinationPath './nssm'; Remove-Item 'nssm.zip'; }\"",
+    "win:install": "npm run win:ensure-nssm && powershell -Command \"./nssm/nssm-2.24/win64/nssm.exe install OrganizerDaemon $(Resolve-Path dist/win/organizer-daemon.exe) -AppDirectory $(Resolve-Path dist/win)\"",
+    "win:start": "powershell -Command \"./nssm/nssm-2.24/win64/nssm.exe start OrganizerDaemon\"",
+    "win:stop": "powershell -Command \"./nssm/nssm-2.24/win64/nssm.exe stop OrganizerDaemon\"",
+    "win:remove": "powershell -Command \"./nssm/nssm-2.24/win64/nssm.exe remove OrganizerDaemon confirm\"",
+    "win:logs": "powershell -Command \"Get-Content dist/win/organizer.log -Wait\"",
     "mac:install": "bash src/scripts/install-mac.sh",
     "mac:unload": "launchctl unload ~/Library/LaunchAgents/com.organizer.daemon.plist",
     "mac:reload": "npm run mac:unload && npm run mac:install",
