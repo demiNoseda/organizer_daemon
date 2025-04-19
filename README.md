@@ -1,96 +1,164 @@
+¡Perfecto, Demi! Acá tenés el contenido listo para copiar y pegar directamente como un `README.md` limpio:
+
+---
+
+```markdown
 # Organizer Daemon
 
-## Descripción
+## 🧠 Descripción
 
-El Organizer Daemon es un servicio de sistema diseñado para automatizar el proceso de organización de archivos en un sistema operativo basado en Linux. Utilizando un archivo de configuración `config.json`, el daemon monitorea una carpeta especificada y mueve archivos según las reglas definidas, basadas en nombres o extensiones de archivo. Esta herramienta es ideal para mantener organizadas las carpetas de descargas o cualquier otro directorio que requiera una gestión regular de archivos.
+**Organizer Daemon** es una herramienta multiplataforma diseñada para automatizar la organización de archivos en directorios como la carpeta de descargas. Utilizando un archivo de configuración `config.json`, monitorea una carpeta y mueve archivos según reglas definidas, basadas en nombres o extensiones.
 
-## Características
+Puede ejecutarse como:
 
-- Monitoreo automático de directorios.
-- Organización de archivos basada en nombres o extensiones.
-- Configurable y fácil de adaptar a diferentes necesidades de organización de archivos.
-- Resistente a cambios en la configuración sin necesidad de reiniciar el servicio.
-- Aplica la primera regla que se cumpla.
+- Un **servicio de sistema** en Linux (`systemd`)
+- Un **servicio en segundo plano** en Windows (mediante [`nssm`](https://nssm.cc))
+- Y próximamente en **macOS** (`launchd`)
 
-## Requisitos Previos
+## ✨ Características
 
-Antes de instalar y ejecutar el Organizer Daemon, asegúrate de tener instalado Node.js. Este proyecto ha sido probado con Node.js versión 18.
+- Monitoreo automático de directorios
+- Organización por nombre de archivo o extensión
+- Configuración editable sin reiniciar el daemon
+- Soporte multiplataforma
+- Fácil instalación y ejecución
 
-## Instalación
+## 📁 Estructura del proyecto
+```
 
-1. Actualiza tu sistema y instala Node.js:
+organizer-daemon/
+├── src/
+│ └── index.js
+│ └── config/
+│ └── default.config.json
+├── dist/
+│ ├── win/
+│ │ ├── organizer-daemon.exe
+│ │ └── config.json
+│ ├── linux/
+│ │ ├── organizer-daemon
+│ │ └── config.json
+│ └── mac/
+│ ├── organizer-daemon
+│ └── config.json
+├── scripts/
+│ ├── build-all.sh
+│ ├── build-all.ps1
+│ └── install-linux.sh
+├── service/
+│ └── linux/
+│ └── organizer.service
+├── package.json
+└── README.md
 
-   ```bash
-   sudo apt update
-   sudo apt upgrade
-   curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-   sudo apt-get install -y nodejs
-   ```
+````
 
-2. Crea un directorio para el daemon y navega a él:
+## ⚙️ Configuración (`config.json`)
 
-   ```bash
-   mkdir ~/myDaemon
-   cd ~/myDaemon
-   ```
-
-3. Copia los archivos `index.js` y `config.json` en el directorio del proyecto.
-
-4. Mueve el archivo `organizer.service` al directorio `/etc/systemd/system/` para integrarlo con el sistema de gestión de servicios de systemd.
-
-## Configuración
-
-Edita el archivo `config.json` para establecer las carpetas a monitorear y las reglas de movimiento de archivos. Aquí tienes un ejemplo de cómo configurar las reglas:
+Ejemplo:
 
 ```json
 {
-  "watchFolder": "/home/debian/Descargas/",
-  "checkInterval": 5000,
+  "watchFolder": "FOLDER WATCHED",
+  "checkInterval": 30000,
   "rules": [
     {
-      "nameContains": "honorarios",
-      "destination": "/home/debian/Documentos/honorarios/"
+      "nameContains": "NAME RULE",
+      "destination": "DESTINATION PATH"
     },
     {
-      "extensions": [".pdf"],
-      "destination": "/home/debian/Documentos/archivos_pdf/"
+      "extensions": ["EXTENSION RULE"],
+      "destination": "DESTINATION PATH"
     }
   ]
 }
-```
 
-### Detalles de configuración
+````
 
-- **watchFolder**: Especifica la ruta completa del directorio que el daemon debe monitorear.
-- **checkInterval**: Define el intervalo de tiempo, en milisegundos, en el que el daemon revisa el directorio watchFolder para cambios.
-- **nameContains**: Define una subcadena que debe estar presente en el nombre del archivo para que la regla se aplique.
-- **extensions**: Especifica un arreglo de extensiones de archivo. Si el archivo tiene una extensión incluida en esta lista, la regla se aplicará.
+### Campos
 
-## Uso
+- `watchFolder`: Carpeta a monitorear.
+- `checkInterval`: Intervalo en milisegundos. (Ej: 604800000 = una vez por semana)
+- `rules`: Reglas que determinan a dónde mover cada archivo:
+  - `nameContains`: Subcadena que debe estar en el nombre del archivo.
+  - `extensions`: Lista de extensiones que activa la regla.
 
-Para gestionar el servicio del Organizer Daemon, usa los siguientes comandos:
+> ⚠️ Se aplica la primera regla que coincida.
 
-- **Iniciar el servicio:**
-  ```bash
-  sudo systemctl start organizer
-  ```
-- **Detener el servicio:**
-  ```bash
-  sudo systemctl stop organizer
-  ```
-- **Reiniciar el servicio:**
-  ```bash
-  sudo systemctl restart organizer
-  ```
-- **Verificar el estado del servicio:**
-  ```bash
-  sudo systemctl status organizer
-  ```
+## 🐧 Instalación en Linux (modo servicio)
 
-## Logs
-
-Los registros del sistema se gestionan a través de syslog. Puedes ver los registros del daemon utilizando herramientas como `journalctl`:
+1. Instalá Node.js si vas a correr desde fuente:
 
 ```bash
+sudo apt install nodejs npm
+```
+
+2. Copiá `organizer.service` a systemd:
+
+```bash
+sudo cp service/linux/organizer.service /etc/systemd/system/
+sudo systemctl daemon-reexec
+sudo systemctl enable organizer
+sudo systemctl start organizer
+```
+
+3. Consultar estado:
+
+```bash
+sudo systemctl status organizer
 journalctl -u organizer
 ```
+
+## 🪟 Instalación en Windows (como servicio)
+
+1. Descargá [`nssm`](https://nssm.cc/download) y colocá su ejecutable donde puedas accederlo.
+
+2. Navegá a `dist/win/` y verificá que existan:
+
+   - `organizer-daemon.exe`
+   - `config.json`
+
+3. Ejecutá desde PowerShell (como administrador):
+
+```powershell
+& "C:\ruta\a\nssm.exe" install OrganizerDaemon
+```
+
+4. En la ventana:
+
+   - **Application path**: `dist/win/organizer-daemon.exe`
+   - **Startup directory**: `dist/win/`
+
+5. Iniciá el servicio:
+
+```powershell
+& "C:\ruta\a\nssm.exe" start OrganizerDaemon
+```
+
+## 🛠 Construcción multiplataforma
+
+Requiere tener instalado [`pkg`](https://github.com/vercel/pkg):
+
+```bash
+npm install -g pkg
+```
+
+### Desde `package.json`:
+
+```bash
+npm run build:all
+```
+
+### Linux/macOS:
+
+```bash
+bash scripts/build-all.sh
+```
+
+### Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-all.ps1
+```
+
+Esto generará los ejecutables en `dist/` y copiará el `config.json` correspondiente.

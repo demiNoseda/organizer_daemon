@@ -1,21 +1,25 @@
 {
-    "name": "organizer-daemon",
-    "version": "1.0.0",
-    "description": "Organizador de archivos multiplataforma",
-    "main": "index.js",
-    "bin": "index.js",
-    "scripts": {
-      "start": "node index.js"
-    },
-    "dependencies": {},
-    "pkg": {
-      "assets": [
-        "config.json"
-      ],
-      "targets": [
-        "node18-win-x64"
-      ],
-      "outputPath": "dist"
-    }
+  "name": "organizer-daemon",
+  "version": "1.0.0",
+  "description": "Organizador de archivos multiplataforma",
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build:win": "pkg . --target node18-win-x64 --output dist/win/organizer-daemon.exe && powershell -Command \"Copy-Item -Path src/config/default.config.json -Destination dist/win/config.json\"",
+    "build:linux": "pkg . --target node18-linux-x64 --output dist/linux/organizer-daemon && cp src/config/default.config.json dist/linux/config.json",
+    "build:mac": "pkg . --target node18-macos-x64 --output dist/mac/organizer-daemon && cp src/config/default.config.json dist/mac/config.json",
+    "build:all": "npm run build:win && npm run build:linux && npm run build:mac"
+  },
+  "dependencies": {},
+  "pkg": {
+    "scripts": "src/index.js",
+    "assets": [],
+    "targets": [
+      "node18-win-x64",
+      "node18-linux-x64",
+      "node18-macos-x64"
+    ],
+    "outputPath": "dist"
   }
-  
+}
