@@ -1,10 +1,25 @@
-const fs = require("fs");
-const path = require("path");
+#!/usr/bin/env node
 
-const configPath = path.join(__dirname, "config.json");
+const path = require("path");
+const fs = require("fs");
+
+// Esto funciona incluso si está empaquetado
+const exeDir = path.dirname(process.execPath);
+const configPath = path.join(exeDir, "config.json");
 
 function loadConfig() {
-  return JSON.parse(fs.readFileSync(configPath, "utf8"));
+  try {
+    const configRaw = fs.readFileSync(configPath, "utf8");
+    const configParsed = JSON.parse(configRaw);
+    console.log(
+      "Configuracion cargada, ejecutandose cada ",
+      configParsed.checkInterval
+    );
+    return configParsed;
+  } catch (error) {
+    console.error("Error cargando configuración:", error);
+    process.exit(1);
+  }
 }
 
 function moveFiles() {
@@ -41,8 +56,6 @@ function moveFiles() {
   });
 }
 
+console.log("Organizer Daemon iniciado...");
+moveFiles();
 setInterval(moveFiles, loadConfig().checkInterval);
-
-console.log(
-  `Daemon iniciado. Revisando cambios basados en intervalo de configuración.`
-);

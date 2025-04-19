@@ -1,0 +1,21 @@
+{
+    "name": "organizer-daemon",
+    "version": "1.0.0",
+    "description": "Organizador de archivos multiplataforma",
+    "main": "index.js",
+    "bin": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "dependencies": {},
+    "pkg": {
+      "assets": [
+        "config.json"
+      ],
+      "targets": [
+        "node18-win-x64"
+      ],
+      "outputPath": "dist"
+    }
+  }
+  
