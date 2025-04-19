@@ -1,2 +1,2 @@
-dist/*
-dist/mac/config.json
+# Ignorar todo dentro de /dist
+dist/
