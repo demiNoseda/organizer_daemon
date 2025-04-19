@@ -39,8 +39,6 @@ organizer-daemon/
 │ ├── linux/
 │ └── mac/
 ├── scripts/
-│ ├── build-all.sh
-│ ├── build-all.ps1
 │ └── install-linux.sh
 ├── service/
 │ └── linux/
