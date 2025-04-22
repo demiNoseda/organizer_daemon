@@ -1,4 +1,5 @@
 ![ChatGPT Image 22 abr 2025, 02_18_59 p m](https://github.com/user-attachments/assets/44622309-7cf8-43c9-b1b6-6841e4c802ac)
+
 ## 🧠 Description
 
 **Organizer Daemon** is a cross-platform tool designed to automate file organization in folders like "Downloads". It uses a `config.json` file to monitor a folder and move files based on name or extension-based rules.
@@ -178,3 +179,15 @@ npm run mac:unload     # Stop
 npm run mac:install    # Install or reinstall
 npm run mac:reload     # Restart the service
 ```
+
+You're all set! The daemon is now running.
+
+To update the configuration, simply edit:
+`path-to-project/dist/win/config.json`  
+📝 No need to stop the daemon when updating the config.
+
+---
+
+## 📝 License
+
+This project is licensed under the [MIT License](./LICENSE).
