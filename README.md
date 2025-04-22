@@ -1,5 +1,4 @@
-# Organizer Daemon
-
+![ChatGPT Image 22 abr 2025, 02_18_59 p m](https://github.com/user-attachments/assets/44622309-7cf8-43c9-b1b6-6841e4c802ac)
 ## 🧠 Description
 
 **Organizer Daemon** is a cross-platform tool designed to automate file organization in folders like "Downloads". It uses a `config.json` file to monitor a folder and move files based on name or extension-based rules.
