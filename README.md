@@ -1,89 +1,97 @@
 # Organizer Daemon
 
-## 🧠 Descripción
+## 🧠 Description
 
-**Organizer Daemon** es una herramienta multiplataforma diseñada para automatizar la organización de archivos en carpetas como "Descargas". Utiliza un archivo de configuración `config.json` para monitorear una carpeta y mover archivos según reglas basadas en nombres o extensiones.
+**Organizer Daemon** is a cross-platform tool designed to automate file organization in folders like "Downloads". It uses a `config.json` file to monitor a folder and move files based on name or extension-based rules.
 
-Se puede ejecutar como:
+It can run as:
 
-- 🐧 Un **servicio de sistema** en Linux (`systemd`)
-- 🪟 Un **servicio en segundo plano** en Windows (usando [`nssm`](https://nssm.cc))
-- 🍎 Un **servicio de usuario** en macOS (usando `launchd`)
-
----
-
-## ✨ Características
-
-- Monitoreo automático de carpetas
-- Organización por nombre de archivo o extensión
-- Configuración editable en caliente
-- Compatible con Linux, Windows y macOS
-- Logs automáticos de actividad y errores
-- Ejecución como servicio persistente
+- 🐧 A **system service** on Linux (`systemd`)
+- 🪟 A **background service** on Windows (using [`nssm`](https://nssm.cc))
+- 🍎 A **user service** on macOS (using `launchd`)
 
 ---
 
-## 📁 Estructura del proyecto
+## ✨ Features
+
+- Automatic folder monitoring
+- File organization by name or extension
+- Hot-reloadable configuration
+- Compatible with Linux, Windows, and macOS
+- Automatic logging of activity and errors
+- Persistent service execution
+
+---
+
+## 📁 Project Structure
 
 ```
-
 organizer-daemon/
 ├── src/
-│ ├── index.js
-│ └── config/
-│ └── default.config.json
-│ └── scripts/
-│ └── install-mac.sh
+│   ├── index.js
+│   └── config/
+│       └── default.config.json
+│   └── scripts/
+│       └── install-mac.sh
 ├── dist/
-│ ├── win/
-│ ├── linux/
-│ └── mac/
+│   ├── win/
+│   ├── linux/
+│   └── mac/
 ├── scripts/
-│ └── install-linux.sh
+│   └── install-linux.sh
 ├── service/
-│ └── linux/
-│ └── organizer.service
+│   └── linux/
+│       └── organizer.service
 ├── package.json
 └── README.md
-
 ```
 
 ---
 
-## ⚙️ Configuración (`config.json`)
+## ⚙️ Configuration (`config.json`)
 
-Ejemplo:
+Example:
 
 ```json
 {
-  "watchFolder": "/Users/demian/Downloads",
-  "checkInterval": 1000,
+  "watchFolders": ["/Users/john/Downloads", "/Users/john/OtherFolder"],
+  "checkInterval": 5000,
   "rules": [
     {
-      "nameContains": "Protocolo",
-      "destination": "/Users/demian/Downloads/Facultad"
+      "nameContains": "honorarios",
+      "destination": "/Users/john/Downloads/College"
     },
     {
       "extensions": [".pdf"],
-      "destination": "/Users/demian/Downloads/Documentos"
+      "destination": "/Users/john/Downloads/Documents"
     }
   ]
 }
 ```
 
-### Campos
+### Fields
 
-- `watchFolder`: Carpeta a monitorear.
-- `checkInterval`: Intervalo de ejecución en milisegundos (ej: `604800000` = 1 semana).
-- `rules`: Lista de reglas para mover archivos:
-  - `nameContains`: Coincidencia por nombre.
-  - `extensions`: Coincidencia por extensión.
-- 📝 Se aplica la **primera regla que coincida**.
-- 📁 Las carpetas de destino se crean automáticamente si no existen.
+- `watchFolder`: Folder to monitor.
+- `checkInterval`: Time interval in milliseconds (e.g., `604800000` = 1 week).
+- `rules`: List of rules for file movement:
+  - `nameContains`: Match by filename.
+  - `extensions`: Match by file extension.
+- 📝 Only the **first matching rule** will be applied.
+- 📁 Destination folders are automatically created if they don’t exist.
 
 ---
 
-## 🐧 Instalación en Linux (`systemd`)
+## 🛠 Cross-platform Build
+
+You’ll need [`pkg`](https://github.com/vercel/pkg) installed globally to build:
+
+```bash
+npm install -g pkg
+```
+
+---
+
+## 🐧 Linux Installation (`systemd`)
 
 ```bash
 sudo cp service/linux/organizer.service /etc/systemd/system/
@@ -92,7 +100,7 @@ sudo systemctl enable organizer
 sudo systemctl start organizer
 ```
 
-### Ver logs:
+### View logs:
 
 ```bash
 journalctl -u organizer -f
@@ -100,75 +108,74 @@ journalctl -u organizer -f
 
 ---
 
-## 🪟 Instalación en Windows (`nssm`)
+## 🪟 Windows Installation (`nssm`)
 
-1. Descargá [`nssm`](https://nssm.cc/download)
-2. Copiá `organizer-daemon.exe` y `config.json` a `dist/win/`
-3. Ejecutá:
+1. Download [`nssm`](https://nssm.cc/download) and make sure it's added to your system path.
+2. Run the Windows build:
 
 ```powershell
-& "C:\ruta\a\nssm.exe" install OrganizerDaemon
+npm run build:win
 ```
 
-4. En la ventana:
-   - **Application path**: `dist/win/organizer-daemon.exe`
-   - **Startup directory**: `dist/win/`
-5. Luego:
+3. Set up your `config.json` in the `dist/win/` folder.
+4. Install the service with:
 
 ```powershell
-& "C:\ruta\a\nssm.exe" start OrganizerDaemon
+nssm install OrganizerDaemon
+```
+
+5. In the window:
+
+   - **Application path**: `path-to-project/dist/win/organizer-daemon.exe`
+   - **Startup directory**: `path-to-project/dist/win/`
+
+6. Start the service:
+
+```powershell
+nssm start OrganizerDaemon
+```
+
+You're all set! The daemon is now running.
+
+To update the configuration, simply edit:
+`path-to-project/dist/win/config.json`  
+📝 No need to stop the daemon when updating the config.
+
+To view logs:
+`path-to-project/dist/win/organizer.log`
+
+To stop the daemon:
+
+```powershell
+nssm stop OrganizerDaemon
 ```
 
 ---
 
-## 🍎 Instalación en macOS (`launchd`)
+## 🍎 macOS Installation (`launchd`)
 
-1. Generá el ejecutable y config:
+1. Build the binary and generate the config:
 
 ```bash
 npm run build:mac
 ```
 
-2. Instalá como servicio con:
+2. Install the service:
 
 ```bash
 npm run mac:install
 ```
 
-3. Ver logs:
+3. View logs:
 
 ```bash
 npm run mac:logs
 ```
 
-4. Detener o recargar:
+4. Stop or reload:
 
 ```bash
-npm run mac:unload     # Detener
-npm run mac:install    # Instalar o reinstalar
-npm run mac:reload     # Reiniciar servicio
+npm run mac:unload     # Stop
+npm run mac:install    # Install or reinstall
+npm run mac:reload     # Restart the service
 ```
-
----
-
-## 🛠 Construcción multiplataforma
-
-Instalá [`pkg`](https://github.com/vercel/pkg):
-
-```bash
-npm install -g pkg
-```
-
-### Desde `package.json`:
-
-```bash
-npm run build:all
-```
-
-Esto genera:
-
-- `dist/win/organizer-daemon.exe`
-- `dist/linux/organizer-daemon`
-- `dist/mac/organizer-daemon`
-
-y copia `config.json` a cada carpeta.

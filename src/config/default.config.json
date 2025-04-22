@@ -1,14 +1,14 @@
 {
-  "watchFolder": "/home/debian/Descargas/",
+  "watchFolders": ["/Users/john/Downloads", "/Users/john/OtherFolder"],
   "checkInterval": 5000,
   "rules": [
     {
       "nameContains": "honorarios",
-      "destination": "/home/debian/Documentos/honorarios/"
+      "destination": "/Users/john/Downloads/College"
     },
     {
       "extensions": [".pdf"],
-      "destination": "/home/debian/Documentos/archivos_pdf/"
+      "destination": "/Users/john/Downloads/Documents"
     }
   ]
 }
